@@ -32,7 +32,8 @@ class  Hello_world_chisel  extends  Module
 
 object  Hello_world_chisel  extends App
 {
-    ChiselStage.emitSystemVerilogFile(new Hello_world_chisel, 
+    ChiselStage.emitSystemVerilogFile(new Hello_world_chisel,
+                                      Array("--target-dir", "generated"), 
                                       firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
 }
 

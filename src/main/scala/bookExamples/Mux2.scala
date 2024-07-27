@@ -14,5 +14,5 @@ class  Mux2  extends  Module
 
 object  Mux2  extends  App
 {
-    ChiselStage.emitSystemVerilogFile(new Mux2, firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
+    ChiselStage.emitSystemVerilogFile(new Mux2, Array("--target-dir", "generated"), firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
 }
