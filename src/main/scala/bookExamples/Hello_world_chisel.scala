@@ -7,17 +7,15 @@ class  Hello_world_chisel  extends  Module
 {
     val  io = IO(new Bundle{val led = Output(UInt(1.W)) })
 
-    val  count_max  =  (50_000_000 / 2 - 1).U
-
-    val  count_reg  = RegInit(0.U(32.W))
+    val  count_reg  = RegInit(0.U(4.W))
     val  led_output = RegInit(1.U(1.W))
 
-    when (count_reg < (50_000_000 / 5).U) // LED turns on for the first 200 ms
+    when (count_reg < 2.U) // LED turns on for the first 200 ms
     {
         led_output := 1.U
         count_reg  := count_reg + 1.U
     }
-    .elsewhen (count_reg < 50_000_000.U)      // for the rest of 1 secondd, the LED turns off
+    .elsewhen (count_reg < 10.U)      // for the rest of 1 secondd, the LED turns off
     {
         led_output := 0.U
         count_reg  := count_reg + 1.U
