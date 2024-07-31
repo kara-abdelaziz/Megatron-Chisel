@@ -8,7 +8,6 @@ module ALU(
   output [15:0] io_sum
 );
 
-  wire [3:0][15:0] _GEN = {{io_a & io_b}, {io_a | io_b}, {io_a - io_b}, {io_a + io_b}};
-  assign io_sum = _GEN[io_fn];
+  assign io_sum = 16'h1;
 endmodule
 

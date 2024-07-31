@@ -37,6 +37,6 @@ class  ALU  extends  Module
 object  mainALU  extends  App
 {
     ChiselStage.emitSystemVerilogFile(new  ALU,
-                                                Array("--target-dir", "generated"), 
-                                                firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
+                                      Array("--target-dir", "generated"), 
+                                      firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
 }
