@@ -1,4 +1,5 @@
-import  chisel3._ 
+import  chisel3._
+import chisel3.util.experimental.loadMemoryFromFile
 import  _root_.circt.stage.ChiselStage
 
 class  Memory  extends  Module
@@ -19,6 +20,7 @@ class  Memory  extends  Module
         mem.write(io.writeAddress, io.writeData)
     }
 
+    loadMemoryFromFile(mem, "/home/snakeas/Megatron-Chisel/src/main/resources/data.hex.txt")
 }
 
 object  mainMemory  extends  App
