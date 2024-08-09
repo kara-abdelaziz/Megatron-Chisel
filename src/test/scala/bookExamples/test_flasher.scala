@@ -18,6 +18,12 @@ class  DUT_flasher extends  AnyFlatSpec  with  ChiselScalatestTester
 
                 dut.io.start.poke(0.U)
                 dut.clock.step(50)
+
+                dut.io.start.poke(1.U)
+                dut.clock.step(1)
+
+                dut.io.start.poke(0.U)
+                dut.clock.step(50)
         }
     }
 }

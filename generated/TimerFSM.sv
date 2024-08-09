@@ -7,25 +7,26 @@ module TimerFSM(
   output io_done
 );
 
-  reg [2:0] countReg;
-  reg       doneReg;
+  reg  [2:0] countReg;
+  reg        doneReg;
+  wire       _GEN = doneReg & io_load;
   always @(posedge clock) begin
     if (reset) begin
       countReg <= 3'h0;
       doneReg <= 1'h1;
     end
     else begin
-      automatic logic _GEN;
-      _GEN = ~io_select & countReg == 3'h5 | io_select & countReg == 3'h3;
+      automatic logic _GEN_0;
+      _GEN_0 = ~io_select & countReg == 3'h2 | io_select & countReg == 3'h0;
       if (doneReg) begin
       end
-      else if (_GEN)
+      else if (_GEN_0)
         countReg <= 3'h0;
       else
         countReg <= countReg + 3'h1;
-      doneReg <= ~(doneReg & io_load) & (~doneReg & _GEN | doneReg);
+      doneReg <= ~_GEN & (~doneReg & _GEN_0 | doneReg);
     end
   end // always @(posedge)
-  assign io_done = doneReg;
+  assign io_done = ~(~doneReg | _GEN);
 endmodule
 

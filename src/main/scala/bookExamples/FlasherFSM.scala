@@ -11,18 +11,19 @@ class  FlasherFSM  extends  Module
 
     val  timer_laod    =  RegInit(0.U(1.W))
     val  timer_select  =  RegInit(0.U(1.W))
-    val  timer_done    =  RegInit(0.U(1.W))
+
+    val  counterReg  =  RegInit(0.U(2.W))
 
     timer.io.load    :=  timer_laod
     timer.io.select  :=  timer_select
-    timer_done       :=  timer.io.done
-
+    
     object  State  extends  ChiselEnum
     {
-        val  ON1, ON2, ON3, OFF1, OFF2, OFF3  =  Value
+        val  ON   =  Value("b0".U)
+        val  OFF  =  Value("b1".U)
     }
 
-    val  stateReg  =  RegInit(State.ON1)
+    val  stateReg  =  RegInit(State.ON)
     val  startReg  =  RegInit(0.U(1.W))
 
     io.light  :=  0.U
@@ -34,107 +35,42 @@ class  FlasherFSM  extends  Module
 
     when(startReg === 1.U)
     {
-        timer_laod  :=  1.U
-        timer_select  :=  0.U
-
-        when(timer_done === 1.U)
-        {
-            timer_laod  :=  0.U
-            io.light    :=  1.U
-        }
-    }
-
-    /*
-    when(startReg === 1.U)
-    {
         switch(stateReg)
         {
-            is(State.ON1)
+            is(State.ON)
             {
                 io.light  :=  1.U
 
-                timer_laod    :=  1.U
+                timer_laod    :=  io.light & !RegNext(io.light)
                 timer_select  :=  0.U
-                timer_laod    :=  0.U
 
-                when(timer_laod === 1.U)
+                when((timer.io.done & !RegNext(timer.io.done)).asBool)
                 {
-                    stateReg       :=  State.OFF1
+                    stateReg  :=  State.OFF
                 }
             }
-
-            is(State.OFF1)
+            
+            is(State.OFF)
             {
                 io.light  :=  0.U
 
-                timer_laod    :=  1.U
+                timer_laod    :=  !io.light & RegNext(io.light)
                 timer_select  :=  1.U
-                timer_laod    :=  0.U
 
-                when(timer_laod === 1.U)
+                when((timer.io.done & !RegNext(timer.io.done)).asBool)
                 {
-                    stateReg       :=  State.ON2
-                }
-            }
-
-            is(State.ON2)
-            {
-                io.light  :=  1.U
-
-                timer_laod    :=  1.U
-                timer_select  :=  0.U
-                timer_laod    :=  0.U
-
-                when(timer_laod === 1.U)
-                {
-                    stateReg       :=  State.OFF2
-                }
-            }
-
-            is(State.OFF2)
-            {
-                io.light  :=  0.U
-
-                timer_laod    :=  1.U
-                timer_select  :=  1.U
-                timer_laod    :=  0.U
-
-                when(timer_laod === 1.U)
-                {
-                    stateReg       :=  State.ON3
-                }
-            }
-
-            is(State.ON3)
-            {
-                io.light  :=  1.U
-
-                timer_laod    :=  1.U
-                timer_select  :=  0.U
-                timer_laod    :=  0.U
-
-                when(timer_laod === 1.U)
-                {
-                    stateReg       :=  State.OFF3
-                }
-            }
-
-            is(State.OFF3)
-            {
-                io.light  :=  0.U
-
-                timer_laod    :=  1.U
-                timer_select  :=  1.U
-                timer_laod    :=  0.U
-
-                when(timer_laod === 1.U)
-                {
-                    stateReg       :=  State.ON1
-                    startReg       :=  0.U
+                    stateReg   :=  State.ON
+                    counterReg := counterReg + 1.U
+                    //printf("counter = %d", counterReg)
+                    when(counterReg === 2.U)
+                    {
+                        startReg   := 0.U
+                        counterReg := 0.U
+                    }
                 }
             }
         }
-    }*/ 
+    }
 }
 
 class  TimerFSM  extends  Module
@@ -150,7 +86,7 @@ class  TimerFSM  extends  Module
     {
         countReg  :=  countReg + 1.U
 
-        when(((io.select === 0.U)&&(countReg === 5.U))||((io.select === 1.U)&&(countReg === 3.U)))
+        when(((io.select === 0.U)&&(countReg === 2.U))||((io.select === 1.U)&&(countReg === 0.U)))
         {
             doneReg   :=  1.U
             countReg  :=  0.U
@@ -162,7 +98,12 @@ class  TimerFSM  extends  Module
         doneReg   :=  0.U
     }
 
-    io.done  :=  doneReg
+    io.done  :=  1.U
+
+    when((doneReg === 0.U) || ((doneReg === 1.U)&&(io.load === 1.U)))
+    {
+        io.done  :=  0.U
+    }
 }
 
 object  mainFlasherFSM  extends  App
