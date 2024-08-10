@@ -12,7 +12,7 @@ class  FlasherFSM  extends  Module
     val  timer_laod    =  RegInit(0.U(1.W))
     val  timer_select  =  RegInit(0.U(1.W))
 
-    val  counterReg  =  RegInit(0.U(2.W))
+    val  counterReg  =  RegInit(0.U(4.W))
 
     timer.io.load    :=  timer_laod
     timer.io.select  :=  timer_select
@@ -44,9 +44,20 @@ class  FlasherFSM  extends  Module
                 timer_laod    :=  io.light & !RegNext(io.light)
                 timer_select  :=  0.U
 
+
+
                 when((timer.io.done & !RegNext(timer.io.done)).asBool)
                 {
                     stateReg  :=  State.OFF
+
+                    counterReg := counterReg + 1.U
+                    //printf("counter = %d", counterReg)
+                    when(counterReg === 2.U)
+                    {
+                        startReg    :=  0.U
+                        counterReg  :=  0.U
+                        stateReg    :=  State.ON
+                    }
                 }
             }
             
@@ -60,13 +71,6 @@ class  FlasherFSM  extends  Module
                 when((timer.io.done & !RegNext(timer.io.done)).asBool)
                 {
                     stateReg   :=  State.ON
-                    counterReg := counterReg + 1.U
-                    //printf("counter = %d", counterReg)
-                    when(counterReg === 2.U)
-                    {
-                        startReg   := 0.U
-                        counterReg := 0.U
-                    }
                 }
             }
         }
@@ -108,7 +112,7 @@ class  TimerFSM  extends  Module
 
 object  mainFlasherFSM  extends  App
 {
-    ChiselStage.emitSystemVerilogFile(  new  TimerFSM,
+    ChiselStage.emitSystemVerilogFile(  new  FlasherFSM,
                                         Array("--target-dir", "generated"),
                                         firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
 }
