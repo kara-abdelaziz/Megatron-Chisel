@@ -9,7 +9,7 @@ class  FlasherSimpleFSM  extends  Module
 
     object  State  extends  ChiselEnum
     {
-        val  OFF, FLASH1, SPACE1, FLASH2, SPACE2, FLASH3  =  Value
+        val  OFF, FLASH, SPACE  =  Value
     }
 
     val  stateReg  =  RegInit(State.OFF)
@@ -17,10 +17,14 @@ class  FlasherSimpleFSM  extends  Module
     val  timer  =  Module(new  SimplerTimer)
 
     timer.io.select  :=  0.U 
+    timer.io.load    :=  timer.io.done
 
-    timer.io.load  :=  timer.io.done
+    val  counter  =  Module(new  SimpleCounter)
 
-    io.flash  :=  0.U
+    counter.io.load       :=  0.U
+    counter.io.decrement  :=  0.U
+
+    io.flash  :=  0.U                
 
     switch(stateReg)
     {
@@ -29,15 +33,17 @@ class  FlasherSimpleFSM  extends  Module
             timer.io.load    :=  1.U
             timer.io.select  :=  0.U
 
+            counter.io.load  :=  1.U
+
             io.flash  :=  0.U
             
             when(io.start.asBool)
             {
-                stateReg  :=  State.FLASH1
+                stateReg  :=  State.FLASH
             }
         }
 
-        is(State.FLASH1)
+        is(State.FLASH)
         {
             timer.io.select  :=  1.U
 
@@ -45,11 +51,20 @@ class  FlasherSimpleFSM  extends  Module
             
             when(timer.io.done.asBool)
             {
-                stateReg  :=  State.SPACE1
+                when(counter.io.done.asBool)
+                {
+                    stateReg  :=  State.OFF
+                }
+                .otherwise
+                {
+                    stateReg  :=  State.SPACE
+
+                    counter.io.decrement  :=  1.U
+                }
             }
         }
 
-        is(State.SPACE1)
+        is(State.SPACE)
         {
             timer.io.select  :=  0.U
 
@@ -57,43 +72,7 @@ class  FlasherSimpleFSM  extends  Module
             
             when(timer.io.done.asBool)
             {
-                stateReg  :=  State.FLASH2
-            }
-        }
-
-        is(State.FLASH2)
-        {
-            timer.io.select  :=  1.U
-
-            io.flash  :=  1.U
-            
-            when(timer.io.done.asBool)
-            {
-                stateReg  :=  State.SPACE2
-            }
-        }
-
-        is(State.SPACE2)
-        {
-            timer.io.select  :=  0.U
-
-            io.flash  :=  0.U
-            
-            when(timer.io.done.asBool)
-            {
-                stateReg  :=  State.FLASH3
-            }
-        }
-
-        is(State.FLASH3)
-        {
-            timer.io.select  :=  1.U
-
-            io.flash  :=  1.U
-            
-            when(timer.io.done.asBool)
-            {
-                stateReg  :=  State.OFF
+                stateReg  :=  State.FLASH
             }
         }
     } 
@@ -131,8 +110,9 @@ class  SimplerTimer  extends  Module
 
 class  SimpleCounter  extends  Module
 {
-    val  io  =  IO(new  Bundle{ val  load  =  Input(UInt(1.W))
-                                val  done  =  Output(UInt(1.W))})
+    val  io  =  IO(new  Bundle{ val  load       =  Input(UInt(1.W))
+                                val  decrement  =  Input(UInt(1.W))  
+                                val  done       =  Output(UInt(1.W))})
 
     val  countReg  =  RegInit(0.U(4.W))
 
@@ -144,7 +124,7 @@ class  SimpleCounter  extends  Module
     }
     .otherwise
     {
-        when(!io.done.asBool)
+        when((!io.done.asBool)&&(io.decrement.asBool))
         {
             countReg  :=  countReg - 1.U
         }
@@ -153,7 +133,7 @@ class  SimpleCounter  extends  Module
 
 object  mainFlasherSimplerFSM  extends  App
 {
-    ChiselStage.emitSystemVerilogFile(  new  SimpleCounter,
+    ChiselStage.emitSystemVerilogFile(  new  FlasherSimpleFSM,
                                         Array("--target-dir", "generated"),
                                         firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
 }
