@@ -41,13 +41,9 @@ class  MinimumVectorWithTuples(n : Int)  extends  Module
 class  MinimumVectorWithMixVec(n : Int)  extends  Module
 {
     val  io  =  IO(new  Bundle{ val  inputs    =  Input(Vec(n, UInt(8.W)))
-                                val  minValue  =  Output(Vec(2, UInt(8.W)))    })
+                                val  minValue  =  Output(MixedVec(UInt(8.W), UInt(8.W)))  })
 
-    // val  (in, idx)  =  
-
-    val  vec  =  VecInit(io.inputs.zipWithIndex.map(x => MixedVecInit(x._1, x._2.U))).reduceTree((x , y) => x)
-    
-    io.minValue  :=  VecInit(io.inputs.zipWithIndex.map(x => MixedVecInit(x._1, x._2.U))).reduceTree((x , y) => x)
+    io.minValue  :=  VecInit(io.inputs.zipWithIndex.map(x => VecInit(x._1, x._2.U))).reduceTree((x , y) => Mux(x(0) < y(0), x, y))
 }
 
 object  mainMinimumVector extends  App

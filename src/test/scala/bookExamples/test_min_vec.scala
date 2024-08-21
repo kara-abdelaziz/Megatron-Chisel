@@ -46,4 +46,24 @@ class  DUT_min_vector extends  AnyFlatSpec  with  ChiselScalatestTester
                 println(dut.io.minValue.index.peekInt())
         }
     }
+
+    "DUT minimum value in a vector of mixed vector" should "find the minimum and its index" in
+    {
+        test(new  MinimumVectorWithMixVec(10))
+        {
+            dut => 
+            
+                for(i <- 0 until 10)
+                {
+                    val  in  =  rand.nextInt(100).U
+                    println(in.toString + " i = " + i.toString)
+                    dut.io.inputs(i).poke(in)
+                }
+
+                dut.clock.step(1)
+
+                println(dut.io.minValue(0).peekInt())
+                println(dut.io.minValue(1).peekInt())
+        }
+    }
 }
