@@ -57,6 +57,8 @@ class  RX(frequency : Int, baudRate : Int)  extends  Module
     val  shiftReg   =  RegInit(0.U(8.W))
     val  bitCntReg  =  RegInit(0.U(4.W))
 
+    val  rxSyncReg  =  RegNext(RegNext(io.rxPin, 1.U), 1.U)
+
     val  readyReg   =  RegInit(false.B)
 
     object  state  extends  ChiselEnum
@@ -72,7 +74,7 @@ class  RX(frequency : Int, baudRate : Int)  extends  Module
         {
             tickReg    :=  (BAUD_TICK + (BAUD_TICK/2)).U
                         
-            when(io.rxPin === 0.U)
+            when(rxSyncReg === 0.U)
             {
                 stateReg   :=  state.STARTING
             }
@@ -101,7 +103,7 @@ class  RX(frequency : Int, baudRate : Int)  extends  Module
                 when(bitCntReg =/= 0.U)
                 {
                     bitCntReg  :=  bitCntReg - 1.U
-                    shiftReg   :=  io.rxPin ## shiftReg(7,1)
+                    shiftReg   :=  rxSyncReg ## shiftReg(7,1)
                 }
                 .otherwise
                 {
@@ -143,6 +145,28 @@ class  RX(frequency : Int, baudRate : Int)  extends  Module
     io.out.valid  :=  ((bitCntReg === 0.U) && readyReg)
 }
 
+class  HelloWorldSender(frequency : Int, baudRate : Int)  extends  Module
+{
+    val  io  =  IO(new  Bundle{ val  txPin  =  Output(UInt(1.W))    })
+
+    val  buffredTX  =  Module(new  BuffredTX(frequency, baudRate))
+
+    io.txPin  :=  buffredTX.io.txPin
+    
+    val  msg  =  new  String("Hello World !")
+
+    val  textVec  =  VecInit(msg.map(_.U))
+    val  i        =  RegInit(0.U)
+
+    buffredTX.io.in.valid  :=  i =/= msg.length.U
+    buffredTX.io.in.bits   :=  textVec(i)
+
+    when((buffredTX.io.in.ready)&&(i =/= msg.length.U))
+    {
+        i  :=  i + 1.U
+    }
+}
+
 class  OneCellBuffer  extends  Module
 {
     val  io  =  IO(new  Bundle{ val  in   =  Flipped(new  serialIO)
@@ -177,12 +201,12 @@ class  OneCellBuffer  extends  Module
         }
     }    
     
-    io.in.ready     :=  stateReg === State.FULL
-    io.out.valid    :=  stateReg === State.EMPTY
+    io.in.ready     :=  stateReg === State.EMPTY
+    io.out.valid    :=  stateReg === State.FULL
     io.out.bits     :=  dataReg    
 }
 
-class  UARTTransmitterTX(frequency : Int, baudRate : Int)  extends  Module
+class  BuffredTX(frequency : Int, baudRate : Int)  extends  Module
 {
     val  io  =  IO(new  Bundle{ val  in      =  Flipped(new  serialIO())
                                 val  txPin   =  Output(UInt(1.W))     })
@@ -195,10 +219,35 @@ class  UARTTransmitterTX(frequency : Int, baudRate : Int)  extends  Module
     io.txPin  :=  tx.io.txPin
 }
 
+class  Echo(frequency : Int, baudRate : Int)  extends  Module
+{
+    val  io  =  IO(new  Bundle{ val  rxPin  =  Input(UInt(1.W))
+                                val  txPin  =  Output(UInt(1.W))   })
+
+    val  befferedTransmetter  =  Module(new  BuffredTX(frequency, baudRate))
+    val  receiver             =  Module(new  RX(frequency, baudRate))
+
+    receiver.io.out  <>  befferedTransmetter.io.in
+
+    receiver.io.rxPin  :=  io.rxPin
+    io.txPin           :=  befferedTransmetter.io.txPin
+}
+
+class  EchedHelloWorld(frequency : Int, baudRate : Int)  extends  Module
+{
+    val  io  =  IO(new  Bundle{ val  txPin  =  Output(UInt(1.W)) })
+
+    val  helloMessage  =  Module(new  HelloWorldSender(frequency, baudRate))
+    val  echoModule    =  Module(new  Echo(frequency, baudRate))
+
+    echoModule.io.rxPin  :=  helloMessage.io.txPin
+
+    io.txPin  :=  echoModule.io.txPin
+}
 
 object  mainRX  extends  App
 {
-    ChiselStage.emitSystemVerilogFile(  new  RX(50_000_000, 9600),
+    ChiselStage.emitSystemVerilogFile(  new  EchedHelloWorld(50_000_000, 9600),
                                         Array("--target-dir", "generated"),
                                         firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
 }
