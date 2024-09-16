@@ -11,7 +11,117 @@ class  FifoIO[T <: Data](data : T)  extends  Bundle
 abstract  class  Buffer[T <: Data](data : T, depth : Int)  extends  Module
 {
     val  io  =  IO(new  FifoIO(data))
+
+    assert(depth > 0, "Invalid depth parameter value, depth should be positif.")
 }
+
+class  BubbleFIFO[T <: Data](data : T, depth : Int)  extends  Buffer(data, depth)
+{
+    private  class  Buffer  extends  Module
+    {
+        val  io  =  IO(new  FifoIO(data))
+
+        val  fullReg  =  RegInit(false.B)
+        val  dataReg  =  Reg(data)
+
+        when(fullReg)
+        {
+            when(io.out.ready)
+            {
+                fullReg  :=  false.B
+            }
+        }
+        .otherwise
+        {
+            when(io.in.valid)
+            {
+                fullReg  :=  true.B
+                dataReg  :=  io.in.bits
+            }
+        }
+
+        io.out.valid  :=  fullReg
+        io.in.ready   :=  !fullReg
+        io.out.bits   :=  dataReg
+    }
+
+    private  class  DoubleBuffer  extends  Module
+    {
+        val  io  =  IO(new  FifoIO(data))
+
+        object  state  extends  ChiselEnum
+        {
+            val  EMPTY, HALF, FULL  =  Value
+        }
+        
+        val  stateReg       =  RegInit(state.EMPTY)
+        val  dataStage1Reg  =  Reg(data)
+        val  dataStage2Reg  =  Reg(data)
+
+        io.out.bits   :=  dataStage1Reg
+        io.out.valid  :=  (stateReg === state.HALF) || (stateReg === state.FULL)
+        io.in.ready   :=  (stateReg === state.HALF) || (stateReg === state.EMPTY)
+        
+        switch(stateReg)
+        {
+            is(state.EMPTY)
+            {
+                when(io.in.valid)
+                {
+                    dataStage1Reg  :=  io.in.bits
+                    stateReg       :=  state.HALF
+                }
+            }
+
+            is(state.HALF)
+            {
+                when(io.in.valid & io.out.ready)
+                {
+                    dataStage1Reg  :=  io.in.bits
+                }
+                .elsewhen(io.in.valid)
+                {
+                    dataStage2Reg  :=  io.in.bits
+                    stateReg       :=  state.FULL
+                }
+                .elsewhen(io.out.ready)
+                {
+                    stateReg       :=  state.EMPTY
+                }
+            }
+
+            is(state.FULL)
+            {
+                when(io.out.ready)
+                {
+                    stateReg       :=  state.HALF
+                    dataStage1Reg  :=  dataStage2Reg
+                }
+            }
+        }
+    }
+
+    private  val  bufferArr  =  Array.fill(depth/2){Module(new  DoubleBuffer)}
+
+    for(i <- 0 until  (depth/2 - 1))
+    {
+        bufferArr(i+1).io.in  <>  bufferArr(i).io.out
+    }
+    
+    bufferArr(0).io.in  <>  io.in
+    io.out       <>  bufferArr(depth/2 - 1).io.out
+}
+
+
+object  mainBuffer  extends  App
+{
+    ChiselStage.emitSystemVerilogFile(  new  BubbleFIFO(UInt(8.W), 8),
+                                        Array("--target-dir", "generated"),
+                                        firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
+}
+
+
+
 
 
 
