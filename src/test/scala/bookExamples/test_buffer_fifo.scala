@@ -7,20 +7,21 @@ class  DUT_buffer_fifo extends  AnyFlatSpec  with  ChiselScalatestTester
 {
     "DUT buffer fifo" should "be able to accomplish a buffer connextion between to devices" in
     {
-        test(new  BubbleFIFO(UInt(8.W), 8)).withAnnotations(Seq(WriteVcdAnnotation))
+        test(new  WrapAroundFIFO(UInt(8.W), 8)).withAnnotations(Seq(WriteVcdAnnotation))
         {
             dut => 
             
                                 
                 dut.io.in.valid.poke(false.B)
+                dut.io.out.ready.poke(false.B)
                 dut.clock.step(1)
 
                 dut.io.in.bits.poke(10.U)
                 dut.io.in.valid.poke(true.B)
-                dut.clock.step(1)
-
+                dut.clock.step(10)
 
                 dut.io.in.valid.poke(false.B)
+                dut.io.out.ready.poke(true.B)
                 dut.clock.step(10)
 
 

@@ -103,7 +103,7 @@ class  BubbleFIFO[T <: Data](data : T, depth : Int)  extends  Buffer(data, depth
 
     private  val  bufferArr  =  Array.fill(depth/2){Module(new  DoubleBuffer)}
 
-    for(i <- 0 until  (depth/2 - 1))
+    for(i <- 0 until (depth/2 - 1))
     {
         bufferArr(i+1).io.in  <>  bufferArr(i).io.out
     }
@@ -112,10 +112,41 @@ class  BubbleFIFO[T <: Data](data : T, depth : Int)  extends  Buffer(data, depth
     io.out       <>  bufferArr(depth/2 - 1).io.out
 }
 
+class  WrapAroundFIFO[T <: Data](data : T, depth : Int)  extends  Buffer(data, depth)
+{
+    val  mem  =  SyncReadMem(depth, data)
+
+    val  enqPtrReg  =  RegInit(0.U((log2Ceil(depth)).W))
+    val  deqPtrReg  =  RegInit(0.U((log2Ceil(depth)).W))
+
+    val  countReg   =  RegInit(0.U((log2Ceil(depth)).W))
+
+    val  outputReg  =  RegNext(mem.read(deqPtrReg))
+
+    io.in.ready   := countReg < depth.U
+    io.out.valid  := countReg > 0.U
+
+    io.out.bits  := outputReg
+
+    when(io.in.ready && io.in.valid)
+    {
+        mem.write(enqPtrReg, io.in.bits)
+        enqPtrReg  := (enqPtrReg + 1.U) % depth.U
+        countReg   := countReg + 1.U
+    }
+
+    when(io.out.valid && io.out.ready)
+    {
+        outputReg    := mem.read(deqPtrReg)
+        deqPtrReg    := (deqPtrReg + 1.U) % depth.U
+        countReg     := countReg - 1.U
+    }
+}
+
 
 object  mainBuffer  extends  App
 {
-    ChiselStage.emitSystemVerilogFile(  new  BubbleFIFO(UInt(8.W), 8),
+    ChiselStage.emitSystemVerilogFile(  new  WrapAroundFIFO(UInt(8.W), 8),
                                         Array("--target-dir", "generated"),
                                         firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
 }
