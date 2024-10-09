@@ -56,52 +56,38 @@ class  DUT_components  extends  AnyFlatSpec  with  ChiselScalatestTester
         }
     }
 
-    "DUT counter 16 bits " should "write and count at the falling edge of the clock" in
+    "DUT shifter 8 bits " should "right shift at the falling edge of the clock" in
     {
-        test(new  counter16bit).withAnnotations(Seq(WriteVcdAnnotation))
+        test(new  Shifter8bit).withAnnotations(Seq(WriteVcdAnnotation))
         {
             dut => 
-                dut.io.lowerIn.poke(0.U(8.W))
-                dut.io.upperIn.poke(0.U(8.W))
-                dut.io.lowerWrite.poke(false.B)
-                dut.io.upperWrite.poke(false.B)
-                dut.clock.step(10)
-
-                dut.io.lowerIn.poke("b1111_1100".U(8.W))
-                dut.io.upperIn.poke(0.U(8.W))
-                dut.io.lowerWrite.poke(true.B)
-                dut.io.upperWrite.poke(false.B)
+                dut.io.in.poke(0.U)
+                dut.io.pallelClock.poke(0.U)
                 dut.clock.step(1)
 
-                dut.io.lowerIn.poke("b1111_1100".U(8.W))
-                dut.io.upperIn.poke(0.U(8.W))
-                dut.io.lowerWrite.poke(false.B)
-                dut.io.upperWrite.poke(false.B)
-                dut.clock.step(10)
-
-                dut.io.lowerIn.poke("b1111_1100".U(8.W))
-                dut.io.upperIn.poke(10.U(8.W))
-                dut.io.lowerWrite.poke(true.B)
-                dut.io.upperWrite.poke(true.B)
+                dut.io.in.poke(1.U)
+                dut.io.pallelClock.poke(0.U)
                 dut.clock.step(1)
 
-                dut.io.lowerIn.poke("b1111_1100".U(8.W))
-                dut.io.upperIn.poke(0.U(8.W))
-                dut.io.lowerWrite.poke(false.B)
-                dut.io.upperWrite.poke(false.B)
-                dut.clock.step(10)
-
-                dut.io.lowerIn.poke("b1111_1100".U(8.W))
-                dut.io.upperIn.poke("b1111_1111".U(8.W))
-                dut.io.lowerWrite.poke(true.B)
-                dut.io.upperWrite.poke(true.B)
+                dut.io.in.poke(0.U)
+                dut.io.pallelClock.poke(0.U)
                 dut.clock.step(1)
 
-                dut.io.lowerIn.poke("b1111_1100".U(8.W))
-                dut.io.upperIn.poke("b1111_1100".U(8.W))
-                dut.io.lowerWrite.poke(false.B)
-                dut.io.upperWrite.poke(false.B)
-                dut.clock.step(10)
+                dut.io.in.poke(1.U)
+                dut.io.pallelClock.poke(0.U)
+                dut.clock.step(1)
+
+                dut.io.in.poke(1.U)
+                dut.io.pallelClock.poke(0.U)
+                dut.clock.step(5)
+
+                dut.io.in.poke(1.U)
+                dut.io.pallelClock.poke(1.U)
+                dut.clock.step(1)
+
+                dut.io.in.poke(1.U)
+                dut.io.pallelClock.poke(0.U)
+                dut.clock.step(5)
         }
     }
 }
