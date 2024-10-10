@@ -11,19 +11,25 @@ class  RAM  extends  Module
                                 val  write  =  Input(Bool())
                                 val  out    =  Output(UInt(8.W))  })
 
-    val  ram  =  Mem(65_536, UInt(8.W))
+    val  negClock  =  (~clock.asUInt).asBool.asClock
 
-    when(io.write)
-    {
-        ram.write(io.addr, io.in)
-    }
+    withClock(negClock)
+    {        
+        val  ram  =  Mem(65_536, UInt(8.W))
+   
 
-    io.out  :=  ram.read(io.addr)
+        when(io.write)
+        {
+            ram.write(io.addr, io.in)
+        }
+        
+        io.out  :=  ram.read(io.addr)
+    } 
 }
 
 object  mainRAM  extends  App
 {
     ChiselStage.emitSystemVerilogFile(new  RAM,
                                       Array("--target-dir", "generated"), 
-                                      firtoolOpts = Array("-disable-all-randomization", "-strip-debug-info"))
+                                      firtoolOpts = Array("-disable-all-randomization"))
 }

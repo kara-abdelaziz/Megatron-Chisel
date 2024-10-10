@@ -44,8 +44,8 @@ class  DataPath  extends  Module
 
     //  datapath interconnecting components
 
-    val  dataBus    =  WireDefault(0.S(8.W))  // Data Bus creation
-    val  resultBus  =  WireDefault(0.S(8.W))  // ALU Result Bus creation
+    val  dataBus    =  WireDefault(0.U(8.W))  // Data Bus creation
+    val  resultBus  =  WireDefault(0.U(8.W))  // ALU Result Bus creation
     val  inputBus   =  WireDefault(0.U(8.W))  // Input Bus creation
 
     rom.io.addr    :=  pc.io.out   // PC interconnexions
@@ -64,16 +64,18 @@ class  DataPath  extends  Module
     y.io.in  :=  resultBus         // y register interconnexions
     x.io.in  :=  resultBus         // x register interconnexions
 
-    resultBus  :=  alu.io.sum      // ALU interconnexions
-    alu.io.b   :=  dataBus
-    alu.io.a   :=  acc.io.out
+    resultBus  :=  alu.io.sum.asUInt    // ALU interconnexions
+    alu.io.b   :=  dataBus.asSInt
+    alu.io.a   :=  acc.io.out.asSInt
 
     acc.io.in  :=  resultBus       // AC register interconnexions
     ioc.io.in  :=  resultBus       // IOC register interconnexions
     out.io.in  :=  resultBus       // OUT register interconnexions
     io.output1 :=  out.io.out
+    iou.io.in  :=  ioc.io.out      // OUI register interconnexions
+    
 
-
+    dataBus  :=  0.U    
     switch(io.dBusAccess)          // Data Bus access multiplexer
     {
         is(0.U)
@@ -97,6 +99,7 @@ class  DataPath  extends  Module
         }
     }
 
+    inputBus  :=  0.U    
     switch(iou.io.inputEnable)     // Inputs to Data Bus encoder
     {
         is("b0001".U)
@@ -120,8 +123,38 @@ class  DataPath  extends  Module
         }
     }
 
-    io.acc7    :=  acc.io.out(7).asBool
+    //  connexion of control signals to components
+
+    pc.io.upperWrite  :=  io.pcHighWrite    // pc control signals connexion
+    pc.io.lowerWrite  :=  io.pcLowWrite
+
+    mau.io.highAddr  :=  io.ramAddrSel(1).asBool    // pmau control signals connexion
+    mau.io.lowAddr   :=  io.ramAddrSel(0).asBool
+
+    ram.io.write     :=  io.ramWrite        // ram control signals connexion
+    
+    x.io.write       :=  io.xWrite          // x control signals connexion
+    x.io.inc         :=  io.xInc
+    y.io.write       :=  io.yWrite          // y control signals connexion
+    acc.io.write     :=  io.accWrite        // acc control signals connexion
+    ioc.io.write     :=  io.iocWrite        // ioc control signals connexion
+
+    alu.io.func      :=  io.aluFuct         // alu functions signals connexion
+
+    iou.io.inputEnCtr   :=  io.inputEnble        // iou control signals connexion
+    iou.io.outputEnCtr  :=  io.outputEnble
+    iou.io.ioEnCtr      :=  io.ioCtlEnble
+    
+    io.acc7    :=  acc.io.out(7).asBool       //  control signals yield to CU
     io.a_eq_b  :=  alu.io.equal
+
+    gamepad_in.io.pallelClock    :=  iou.io.inputEnable(0).asBool   //  connecting the iou control signal to input peripherals
+    keyboard_in.io.pallelClock   :=  iou.io.inputEnable(1).asBool
+
+    out.io.write  :=  iou.io.outputWrite(0).asBool                  //  connecting the iou control signal to output peripherals
+
+    gamepad_in.io.in    :=  0.U
+    keyboard_in.io.in   :=  0.U
 }
 
 object  mainDataPath  extends  App

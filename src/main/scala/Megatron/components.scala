@@ -31,6 +31,7 @@ class  counter8bit  extends  Module
                                 val  write  =  Input(Bool())
                                 val  inc    =  Input(Bool())
                                 val  out    =  Output(UInt(8.W)) })
+                                
     val  negClock  =  (~clock.asUInt).asBool.asClock
 
     val  negReg  =  withClock(negClock)
