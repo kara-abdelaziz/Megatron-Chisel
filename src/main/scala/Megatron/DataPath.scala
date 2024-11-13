@@ -12,7 +12,7 @@ class  DataPath  extends  Module
                                 val  xWrite      =  Input(Bool()) 
                                 val  xInc        =  Input(Bool()) 
                                 val  yWrite      =  Input(Bool())
-                                val  accWrite    =  Input(Bool())                                  
+                                val  accWrite    =  Input(Bool())
                                 val  iocWrite    =  Input(Bool())
                                 val  inputEnble  =  Input(Bool())
                                 val  outputEnble =  Input(Bool())

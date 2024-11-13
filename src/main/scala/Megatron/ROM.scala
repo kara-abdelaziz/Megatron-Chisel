@@ -2,7 +2,7 @@ package  megatron
 
 import  chisel3._
 import  chisel3.util._
-import  chisel3.util.experimental.loadMemoryFromFile
+import  chisel3.util.experimental.loadMemoryFromFileInline
 import  _root_.circt.stage.ChiselStage
 
 class  ROM  extends  Module
@@ -15,7 +15,7 @@ class  ROM  extends  Module
 
     val  output  =  rom.read(io.addr)
 
-    loadMemoryFromFile(rom, "/home/snakeas/Megatron-Chisel/src/main/resources/ROM.hex")
+    loadMemoryFromFileInline(rom, "/home/snakeas/Megatron-Chisel/src/main/resources/ROM.hex")
 
     io.ir    :=  output(7,0)
     io.data  :=  output(15,8)
