@@ -3,6 +3,7 @@ package  megatron
 import  chisel3._
 import  chisel3.util._
 import  _root_.circt.stage.ChiselStage
+import  chisel3.util.experimental.loadMemoryFromFileInline
 
 class  RAM  extends  Module
 {
@@ -24,7 +25,11 @@ class  RAM  extends  Module
         }
         
         io.out  :=  ram.read(io.addr)
-    } 
+
+        loadMemoryFromFileInline(ram, "/home/snakeas/Megatron-Chisel/src/main/resources/RAM.hex")
+    }
+
+    
 }
 
 object  mainRAM  extends  App

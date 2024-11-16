@@ -6,7 +6,8 @@ import  _root_.circt.stage.ChiselStage
 
 class  DataPath  extends  Module
 {
-    val  io  =  IO(new  Bundle{ val  dBusAccess  =  Input(UInt(2.W))
+    val  io  =  IO(new  Bundle{ // Control signals
+                                val  dBusAccess  =  Input(UInt(2.W))
                                 val  ramAddrSel  =  Input(UInt(2.W))
                                 val  ramWrite    =  Input(Bool())
                                 val  xWrite      =  Input(Bool()) 
@@ -21,6 +22,11 @@ class  DataPath  extends  Module
                                 val  pcLowWrite  =  Input(Bool()) 
                                 val  aluFuct     =  Input(UInt(3.W))
 
+                                // Gamepad and Keyboard serial inputs
+                                val  GamepadIn   =  Input(Bool()) 
+                                val  KeyboardIn  =  Input(Bool()) 
+
+                                // Megatron outputs
                                 val  acc7        =  Output(Bool())
                                 val  a_eq_b      =  Output(Bool())
                                 val  opCode      =  Output(UInt(8.W))
@@ -148,13 +154,15 @@ class  DataPath  extends  Module
     io.acc7    :=  acc.io.out(7).asBool       //  control signals yield to CU
     io.a_eq_b  :=  alu.io.equal
 
-    gamepad_in.io.pallelClock    :=  iou.io.inputEnable(0).asBool   //  connecting the iou control signal to input peripherals
-    keyboard_in.io.pallelClock   :=  iou.io.inputEnable(1).asBool
+    // gamepad and keyboard serial and parallel clocks should be outsoursed and not controlled by IOC and IOU
+    
+    gamepad_in.io.pallelClock    :=  iou.io.periphralCtr(0).asBool   //  connecting the iou control signals to peripherals controls
+    keyboard_in.io.pallelClock   :=  iou.io.periphralCtr(1).asBool
 
     out.io.write  :=  iou.io.outputWrite(0).asBool                  //  connecting the iou control signal to output peripherals
 
-    gamepad_in.io.in    :=  0.U
-    keyboard_in.io.in   :=  0.U
+    gamepad_in.io.in    :=  io.GamepadIn
+    keyboard_in.io.in   :=  io.KeyboardIn
 }
 
 object  mainDataPath  extends  App
