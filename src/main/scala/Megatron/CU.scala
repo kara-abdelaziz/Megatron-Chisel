@@ -27,19 +27,19 @@ class  CU  extends  Module
     val  ioc_ce_instr  =  (io.opCode(7,5) === "b110".U) & (io.opCode(1,0) === "b01".U)   // detect the IOU instruction
     
     io.dBusAccess  :=  Mux(ioc_ce_instr, MuxLookup(io.opCode(4,2), "b01".U)(Seq(0.U -> "b01".U, 1.U -> "b01".U, 2.U -> "b01".U, 3.U -> "b01".U, 4.U -> "b00".U, 5.U -> "b00".U, 6.U -> "b10".U, 7.U -> "b11".U)) , io.opCode(1,0))
-    io.ramAddrSel  :=  ((io.opCode(4,2) === 2.U(3.W)) | (io.opCode(4,2) === 3.U(3.W)) | (io.opCode(4,2) === 7.U(3.W))) ## ((io.opCode(4,2) === 1.U(3.W)) | (io.opCode(4,2) === 3.U(3.W)) | (io.opCode(4,2) === 7.U(3.W)))
+    io.ramAddrSel  :=  Mux((io.opCode(7,5) === "b111".U), "b00".U, ((io.opCode(4,2) === 2.U(3.W)) | (io.opCode(4,2) === 3.U(3.W)) | (io.opCode(4,2) === 7.U(3.W))) ## ((io.opCode(4,2) === 1.U(3.W)) | (io.opCode(4,2) === 3.U(3.W)) | (io.opCode(4,2) === 7.U(3.W)))) 
     io.ramWrite    :=  (io.opCode(7,5) === "b110".U) &  (io.opCode(1,0) =/= "b01".U) 
-    io.xWrite      :=  (io.opCode(4,2) === 4.U(3.W)) & ~(io.opCode(7,5) === "b111".U)
-    io.xInc        :=  (io.opCode(4,2) === 7.U(3.W)) & ~(io.opCode(7,5) === "b111".U)
-    io.yWrite      :=  (io.opCode(4,2) === 5.U(3.W)) & ~(io.opCode(7,5) === "b111".U)
+    io.xWrite      :=  (io.opCode(4,2) === 4.U(3.W)) & ~(io.opCode(7,5) === "b111".U) & ~ioc_ce_instr
+    io.xInc        :=  (io.opCode(4,2) === 7.U(3.W)) & ~(io.opCode(7,5) === "b111".U) & ~ioc_ce_instr
+    io.yWrite      :=  (io.opCode(4,2) === 5.U(3.W)) & ~(io.opCode(7,5) === "b111".U) & ~ioc_ce_instr
     io.accWrite    :=  ~io.opCode(4) & ~(io.opCode(7,6) === "b11".U)
     io.iocWrite    :=  (io.opCode(7,5) === "b110".U) & (io.opCode(1,0) === "b01".U) & ~io.ioCtlEnble // Check the instruction set table
     io.inputEnble  :=  (io.opCode(1,0) === "b11".U)
     io.outputEnble :=  (io.opCode(4,3) === "b11".U) & ~(io.opCode(7,6) === "b11".U)
     io.ioCtlEnble  :=  io.opCode === "b110_101_01".U   // Check the instruction set table
     io.pcHighWrite :=  (io.opCode(7,5) === "b111".U) & (io.opCode(4,2) === "b000".U)
-    io.pcLowWrite  :=  io.pcHighWrite | ((io.opCode(7,5) === "b111".U) & MuxLookup((io.a_eq_b && io.acc7), 0.U)(Seq(0.U -> io.opCode(2), 1.U -> io.opCode(3), 2.U -> io.opCode(4), 3.U -> 0.U)))
-    io.aluFuct     :=  io.opCode(7,5)
+    io.pcLowWrite  :=  io.pcHighWrite | ((io.opCode(7,5) === "b111".U) & MuxLookup((io.a_eq_b ## io.acc7), 0.U)(Seq(0.U -> io.opCode(2), 1.U -> io.opCode(3), 2.U -> io.opCode(4), 3.U -> 0.U)))
+    io.aluFuct     :=  Mux(ioc_ce_instr, "b000".U, io.opCode(7,5))
 }
 
 object  mainControlUnit extends  App

@@ -491,7 +491,7 @@ class  DUT_cu  extends  AnyFlatSpec  with  ChiselScalatestTester
 
                 ////////////////////////////////////////////
                 //                                        //
-                //          TESTING IO INSTRUCTION        //
+                //       TESTING IO/CE INSTRUCTIONs       //
                 //                                        //
                 ////////////////////////////////////////////
              
@@ -550,6 +550,290 @@ class  DUT_cu  extends  AnyFlatSpec  with  ChiselScalatestTester
                 dut.io.a_eq_b.poke(false.B)
                 
                 dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING JMP INSTRUCTION         //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // JMP $dd
+                dut.io.opCode.poke("b111_000_00".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // JMP $dd
+                dut.io.opCode.poke("b111_000_00".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // JMP $dd
+                dut.io.opCode.poke("b111_000_00".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // JMP $dd
+                dut.io.opCode.poke("b111_000_00".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING BGT INSTRUCTION         //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // BGT $dd
+                dut.io.opCode.poke("b111_001_00".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BGT $dd
+                dut.io.opCode.poke("b111_001_00".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // BGT $dd
+                dut.io.opCode.poke("b111_001_00".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BGT $dd
+                dut.io.opCode.poke("b111_001_00".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING BLT INSTRUCTION         //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // BLT [$dd]
+                dut.io.opCode.poke("b111_010_01".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BLT [$dd]
+                dut.io.opCode.poke("b111_010_01".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // BLT [$dd]
+                dut.io.opCode.poke("b111_010_01".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BLT [$dd]
+                dut.io.opCode.poke("b111_010_01".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING BNE INSTRUCTION         //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // BNE AC
+                dut.io.opCode.poke("b111_011_10".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BNE AC
+                dut.io.opCode.poke("b111_011_10".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // BNE AC
+                dut.io.opCode.poke("b111_011_10".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BNE AC
+                dut.io.opCode.poke("b111_011_10".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING BEQ INSTRUCTION         //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // BEQ IN
+                dut.io.opCode.poke("b111_100_11".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BEQ IN
+                dut.io.opCode.poke("b111_100_11".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // BEQ IN
+                dut.io.opCode.poke("b111_100_11".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BEQ IN
+                dut.io.opCode.poke("b111_100_11".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING BGE INSTRUCTION         //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // BGE $dd
+                dut.io.opCode.poke("b111_101_00".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BGE $dd
+                dut.io.opCode.poke("b111_101_00".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // BGE $dd
+                dut.io.opCode.poke("b111_101_00".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BGE $dd
+                dut.io.opCode.poke("b111_101_00".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING BLE INSTRUCTION         //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // BLE [$dd]
+                dut.io.opCode.poke("b111_110_01".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BLE [$dd]
+                dut.io.opCode.poke("b111_110_01".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // BLE [$dd]
+                dut.io.opCode.poke("b111_110_01".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // BLE [$dd]
+                dut.io.opCode.poke("b111_110_01".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+                ////////////////////////////////////////////
+                //                                        //
+                //        TESTING B INSTRUCTION           //
+                //                                        //
+                ////////////////////////////////////////////
+             
+                // B IN
+                dut.io.opCode.poke("b111_111_11".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // B IN
+                dut.io.opCode.poke("b111_111_11".U)
+                dut.io.acc7.poke(false.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+                // B IN
+                dut.io.opCode.poke("b111_111_11".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(false.B)
+                
+                dut.clock.step(1)
+
+                // B IN
+                dut.io.opCode.poke("b111_111_11".U)
+                dut.io.acc7.poke(true.B)
+                dut.io.a_eq_b.poke(true.B)
+                
+                dut.clock.step(1)
+
+
+
+
         }
     }
 }   
