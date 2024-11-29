@@ -53,7 +53,7 @@ class  ALU  extends  Module
 
         is(7.U(3.W))
         {
-            io.sum  :=  io.a - 1.S
+            io.sum  :=  -io.a
         }
     }
 
