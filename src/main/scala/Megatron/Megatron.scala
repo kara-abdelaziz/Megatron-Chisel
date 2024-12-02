@@ -5,25 +5,43 @@ import  chisel3.util._
 import  _root_.circt.stage.ChiselStage
 
 class  Megatron  extends  Module
-{   val  io  =  IO(new  Bundle{ val  opCode      =  Input(UInt(8.W)) 
-                                val  acc7        =  Input(Bool())
-                                val  a_eq_b      =  Input(Bool())                                                               
+{   val  io  =  IO(new  Bundle{ val  GamepadIn   =  Input(Bool()) 
+                                val  KeyboardIn  =  Input(Bool())                                
                                 
-                                val  dBusAccess  =  Output(UInt(2.W))
-                                val  ramAddrSel  =  Output(UInt(2.W))
-                                val  ramWrite    =  Output(Bool())
-                                val  xWrite      =  Output(Bool()) 
-                                val  xInc        =  Output(Bool()) 
-                                val  yWrite      =  Output(Bool())
-                                val  accWrite    =  Output(Bool())
-                                val  iocWrite    =  Output(Bool())
-                                val  inputEnble  =  Output(Bool())
-                                val  outputEnble =  Output(Bool())
-                                val  ioCtlEnble  =  Output(Bool())
-                                val  pcHighWrite =  Output(Bool()) 
-                                val  pcLowWrite  =  Output(Bool()) 
-                                val  aluFuct     =  Output(UInt(3.W)) })  
+                                val  output1     =  Output(UInt(8.W))  })
 
+    val  datapath     =  Module(new  DataPath)
+    val  controlUnit  =  Module(new  CU)
+
+    //  connecting the datapath to the CU
+
+    controlUnit.io.opCode  :=  datapath.io.opCode
+    controlUnit.io.acc7    :=  datapath.io.acc7
+    controlUnit.io.a_eq_b  :=  datapath.io.a_eq_b
+
+    //  connecting the CU to the datapath
+
+    datapath.io.dBusAccess   :=  controlUnit.io.dBusAccess
+    datapath.io.ramAddrSel   :=  controlUnit.io.ramAddrSel
+    datapath.io.ramWrite     :=  controlUnit.io.ramWrite
+    datapath.io.xWrite       :=  controlUnit.io.xWrite
+    datapath.io.xInc         :=  controlUnit.io.xInc
+    datapath.io.yWrite       :=  controlUnit.io.yWrite
+    datapath.io.accWrite     :=  controlUnit.io.accWrite
+    datapath.io.iocWrite     :=  controlUnit.io.iocWrite
+    datapath.io.inputEnble   :=  controlUnit.io.inputEnble
+    datapath.io.outputEnble  :=  controlUnit.io.outputEnble
+    datapath.io.ioCtlEnble   :=  controlUnit.io.ioCtlEnble
+    datapath.io.pcHighWrite  :=  controlUnit.io.pcHighWrite
+    datapath.io.pcLowWrite   :=  controlUnit.io.pcLowWrite
+    datapath.io.aluFuct      :=  controlUnit.io.aluFuct
+    
+    //  connecting the datapath to megatron inputs/outputs
+
+    datapath.io.GamepadIn   :=  io.GamepadIn
+    datapath.io.KeyboardIn  :=  io.KeyboardIn
+
+    io.output1  :=  datapath.io.output1
 }
 
 object  mainMegatron extends  App
