@@ -26,7 +26,7 @@ class  RAM  extends  Module
         
         io.out  :=  ram.read(io.addr)
 
-        loadMemoryFromFileInline(ram, "/home/snakeas/Megatron-Chisel/src/main/resources/RAM.hex")
+        // loadMemoryFromFileInline(ram, "/home/snakeas/Megatron-Chisel/src/main/resources/RAM.hex")
     }
 
     

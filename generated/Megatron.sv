@@ -93,10 +93,6 @@ module ram_65536x8(
     if (W0_en & 1'h1)
       Memory[W0_addr] <= W0_data;
   end // always @(posedge)
-  `ifdef ENABLE_INITIAL_MEM_
-    initial
-      $readmemh("/home/snakeas/Megatron-Chisel/src/main/resources/RAM.hex", Memory);
-  `endif // ENABLE_INITIAL_MEM_
   assign R0_data = R0_en ? Memory[R0_addr] : 8'bx;
 endmodule
 
@@ -125,7 +121,7 @@ module ALU(
                io_b,
   input  [2:0] io_func,
   output [7:0] io_sum,
-  output       io_equal
+  output       io_carry
 );
 
   wire [7:0][7:0] _GEN =
@@ -138,7 +134,7 @@ module ALU(
      {io_a & io_b},
      {io_b}};
   assign io_sum = _GEN[io_func];
-  assign io_equal = io_a == io_b;
+  assign io_carry = 1'h0 - io_a[0];
 endmodule
 
 module IOU(
@@ -243,7 +239,7 @@ module DataPath(
   input        io_GamepadIn,
                io_KeyboardIn,
   output       io_acc7,
-               io_a_eq_b,
+               io_carry,
   output [7:0] io_opCode,
                io_output1
 );
@@ -303,7 +299,7 @@ module DataPath(
     .io_b     (_GEN[io_dBusAccess]),
     .io_func  (io_aluFuct),
     .io_sum   (_alu_io_sum),
-    .io_equal (io_a_eq_b)
+    .io_carry (io_carry)
   );
   IOU iou (
     .io_in           (_ioc_io_out),
@@ -370,7 +366,7 @@ endmodule
 module CU(
   input  [7:0] io_opCode,
   input        io_acc7,
-               io_a_eq_b,
+               io_carry,
   output [1:0] io_dBusAccess,
                io_ramAddrSel,
   output       io_ramWrite,
@@ -391,7 +387,7 @@ module CU(
   wire       ioc_ce_instr = io_opCode[7:5] == 3'h6 & io_opCode[1:0] == 2'h1;
   assign io_ioCtlEnble_0 = io_opCode == 8'hD5;
   wire       io_pcHighWrite_0 = (&(io_opCode[7:5])) & io_opCode[4:2] == 3'h0;
-  wire [1:0] _io_pcLowWrite_T_2 = {io_a_eq_b, io_acc7};
+  wire [1:0] _io_pcLowWrite_T_2 = {io_carry, io_acc7};
   assign io_dBusAccess =
     ioc_ce_instr
       ? ((&(io_opCode[4:2]))
@@ -446,7 +442,7 @@ module Megatron(
   wire       _controlUnit_io_pcLowWrite;
   wire [2:0] _controlUnit_io_aluFuct;
   wire       _datapath_io_acc7;
-  wire       _datapath_io_a_eq_b;
+  wire       _datapath_io_carry;
   wire [7:0] _datapath_io_opCode;
   DataPath datapath (
     .clock          (clock),
@@ -468,14 +464,14 @@ module Megatron(
     .io_GamepadIn   (io_GamepadIn),
     .io_KeyboardIn  (io_KeyboardIn),
     .io_acc7        (_datapath_io_acc7),
-    .io_a_eq_b      (_datapath_io_a_eq_b),
+    .io_carry       (_datapath_io_carry),
     .io_opCode      (_datapath_io_opCode),
     .io_output1     (io_output1)
   );
   CU controlUnit (
     .io_opCode      (_datapath_io_opCode),
     .io_acc7        (_datapath_io_acc7),
-    .io_a_eq_b      (_datapath_io_a_eq_b),
+    .io_carry       (_datapath_io_carry),
     .io_dBusAccess  (_controlUnit_io_dBusAccess),
     .io_ramAddrSel  (_controlUnit_io_ramAddrSel),
     .io_ramWrite    (_controlUnit_io_ramWrite),

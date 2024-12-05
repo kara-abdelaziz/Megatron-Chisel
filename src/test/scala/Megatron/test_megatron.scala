@@ -10,7 +10,7 @@ class  DUT_megatron  extends  AnyFlatSpec  with  ChiselScalatestTester
         test(new  Megatron).withAnnotations(Seq(WriteVcdAnnotation))
         {
             dut => 
-
+                // This test works for both, Fibonacci and Factrial
                 // putting the the value 3 in the gamepad register
 
                 dut.io.GamepadIn.poke(false.B)
@@ -23,7 +23,7 @@ class  DUT_megatron  extends  AnyFlatSpec  with  ChiselScalatestTester
                 dut.clock.step(1)
 
                 
-                dut.clock.step(100)
+                dut.clock.step(200)
 
         }
     }

@@ -7,7 +7,7 @@ import  _root_.circt.stage.ChiselStage
 class  CU  extends  Module
 {   val  io  =  IO(new  Bundle{ val  opCode      =  Input(UInt(8.W)) 
                                 val  acc7        =  Input(Bool())
-                                val  a_eq_b      =  Input(Bool())                                                               
+                                val  carry       =  Input(Bool())                                                               
                                 
                                 val  dBusAccess  =  Output(UInt(2.W))
                                 val  ramAddrSel  =  Output(UInt(2.W))
@@ -38,7 +38,7 @@ class  CU  extends  Module
     io.outputEnble :=  (io.opCode(4,3) === "b11".U) & ~(io.opCode(7,6) === "b11".U)
     io.ioCtlEnble  :=  io.opCode === "b110_101_01".U   // Check the instruction set table
     io.pcHighWrite :=  (io.opCode(7,5) === "b111".U) & (io.opCode(4,2) === "b000".U)
-    io.pcLowWrite  :=  io.pcHighWrite | ((io.opCode(7,5) === "b111".U) & MuxLookup((io.a_eq_b ## io.acc7), 0.U)(Seq(0.U -> io.opCode(2), 1.U -> io.opCode(3), 2.U -> io.opCode(4), 3.U -> 0.U)))
+    io.pcLowWrite  :=  io.pcHighWrite | ((io.opCode(7,5) === "b111".U) & MuxLookup((io.carry ## io.acc7), 0.U)(Seq(0.U -> io.opCode(2), 1.U -> io.opCode(3), 2.U -> io.opCode(4), 3.U -> 0.U)))
     io.aluFuct     :=  Mux(ioc_ce_instr, "b000".U, io.opCode(7,5))
 }
 

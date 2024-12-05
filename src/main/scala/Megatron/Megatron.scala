@@ -17,7 +17,7 @@ class  Megatron  extends  Module
 
     controlUnit.io.opCode  :=  datapath.io.opCode
     controlUnit.io.acc7    :=  datapath.io.acc7
-    controlUnit.io.a_eq_b  :=  datapath.io.a_eq_b
+    controlUnit.io.carry   :=  datapath.io.carry
 
     //  connecting the CU to the datapath
 

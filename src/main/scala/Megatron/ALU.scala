@@ -10,7 +10,7 @@ class  ALU  extends  Module
                                 val  b      =  Input(SInt(8.W))
                                 val  func   =  Input(UInt(3.W))                                                                
                                 val  sum    =  Output(SInt(8.W))
-                                val  equal  =  Output(Bool()) })
+                                val  carry  =  Output(Bool()) })
     
     io.sum  :=  0.S
 
@@ -57,7 +57,7 @@ class  ALU  extends  Module
         }
     }
 
-    io.equal  :=  (io.a === io.b)
+    io.carry  :=  io.a === 0.S
 }
 
 object  mainALU extends  App

@@ -28,7 +28,7 @@ class  DataPath  extends  Module
 
                                 // Megatron outputs
                                 val  acc7        =  Output(Bool())
-                                val  a_eq_b      =  Output(Bool())
+                                val  carry       =  Output(Bool())
                                 val  opCode      =  Output(UInt(8.W))
                                 val  output1     =  Output(UInt(8.W)) })
     
@@ -152,7 +152,7 @@ class  DataPath  extends  Module
     iou.io.ioEnCtr      :=  io.ioCtlEnble
     
     io.acc7    :=  acc.io.out(7).asBool       //  control signals yield to CU
-    io.a_eq_b  :=  alu.io.equal
+    io.carry   :=  alu.io.carry
 
     // gamepad and keyboard serial and parallel clocks should be outsoursed and not controlled by IOC and IOU
     
