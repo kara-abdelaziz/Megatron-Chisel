@@ -1,0 +1,31 @@
+0002  // The beginning of the Fibonacci program, the NOP instruction is here to buffer to falling edge of the clock
+11D1  // IO $dd ($dd = $11) loading the value $11 to IOC                                            
+0002  // NOP
+0002    
+00D5  // CE - catching-up the value 3 serially put in the GamePad shifter
+0002
+0002
+0002 
+0002
+0002
+0000  // The start of the program like in the original Megatron (refers to the file fibonacci.txt)
+0FC2
+0010
+01C4
+001D
+01C4
+0003
+0FA1
+1EF8  // BLE $14 - branch to the end of the program at address $1E
+0002                                                                            
+0F11
+0005
+007E
+0085
+001E
+00C6
+0F01
+0180
+0FC2
+10FC  // B $10 - jmp loop while to address $10
+0002

@@ -16,6 +16,8 @@ class  ROM  extends  Module
     val  output  =  rom.read(io.addr)
 
     loadMemoryFromFileInline(rom, "/home/snakeas/Megatron-Chisel/src/main/resources/ROM.hex")
+    //loadMemoryFromFileInline(rom, "/home/snakeas/Megatron-Chisel/src/main/resources/Factorial.hex")
+    //loadMemoryFromFileInline(rom, "/home/snakeas/Megatron-Chisel/src/main/resources/Fibonacci.hex")
 
     io.ir    :=  output(7,0)
     io.data  :=  output(15,8)
