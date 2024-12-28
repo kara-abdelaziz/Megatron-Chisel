@@ -134,7 +134,7 @@ module ALU(
      {io_a & io_b},
      {io_b}};
   assign io_sum = _GEN[io_func];
-  assign io_carry = 1'h0 - io_a[0];
+  assign io_carry = io_a == 8'h0;
 endmodule
 
 module IOU(
