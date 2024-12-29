@@ -1,9 +1,32 @@
-Chisel Project Template
-=======================
+# Megatron-Chisel Project
+================================
 
-You've done the [Chisel Bootcamp](https://github.com/freechipsproject/chisel-bootcamp), and now you
-are ready to start your own Chisel project.  The following procedure should get you started
-with a clean running [Chisel3](https://www.chisel-lang.org/) project.
+The project Megatron-chisel is an implementation of [Megatron project](https://www.el-kalam.com/projets/projet-megatron/) 
+ of the hardware description language [Chisel](https://www.chisel-lang.org/). 
+Chisel generate at the end System Verilog files (possible to generate Verilog also), 
+that can be used in hardware simulation or a bitstream loaded to an FPGA with some additional specific configurations.
+
+## How to test Megatron-Chisel
+
+The first way to test Megatron-Chisel is to use the official Chisel tester tool called [Chiseltest](https://github.com/ucb-bar/chiseltest), 
+it is a library used to perform formal verification for hardware circuits.
+
+The second way, it is also a very effectif way, by inspecting the simulation signal waveformes using [GTKWave](https://gtkwave.sourceforge.net/).
+
+But the ultimate way to test Megatron-Chisel is evidently by writing some programs or pieces of code and running the clock to inspect the results after execution. 
+You have already two preprogrammed algorithms, fibonacci and factorial. Written in binary or machine language, 
+after translation from assembly language (done previously on [Megatron project](https://www.el-kalam.com/projets/projet-megatron/)). 
+The programs are saved in hexadecimal format in .ROM text files, and loaded in the ROM while starting the machine.
+
+## Installing Chisel laguage on windows and using VS Code
+
+
+
+
+
+
+
+
 
 ## Make your own Chisel3 project
 
