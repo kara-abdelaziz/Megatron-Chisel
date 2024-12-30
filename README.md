@@ -129,6 +129,15 @@ gtkwave -f test_run_dir/DUT_megatron_should_be_able_to_perform_a_Fibonacci_seque
 ```
 The .vcd file containing the waveform was generated in the test process phase.
 
+### 3. Installing VS Code
+
+[VS Code](https://code.visualstudio.com/) was the IDE used to develop Megatron-Chisel in Chisel. Two additional extensions to VS cOde were installed, **Chisel syntax** and **WSL**. 
+The first one implied to the syntax highlight, and the second to integrate the installed WSL command-line within VS Code. The sceen shot below gives an overview of the IDE configuration.
+
+![vscode screenshot](screen-shot.jpg)
+
+
+
 
 ## Make your own Chisel3 project
 
