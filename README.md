@@ -131,10 +131,38 @@ The .vcd file containing the waveform was generated in the test process phase.
 
 ### 3. Installing VS Code
 
-[VS Code](https://code.visualstudio.com/) was the IDE used to develop Megatron-Chisel in Chisel. Two additional extensions to VS cOde were installed, **Chisel syntax** and **WSL**. 
-The first one implied to the syntax highlight, and the second to integrate the installed WSL command-line within VS Code. The sceen shot below gives an overview of the IDE configuration.
+[VS Code](https://code.visualstudio.com/) was the IDE used to develop Megatron-Chisel in Chisel. Two additional extensions to VS Code were installed, **Chisel syntax** and **WSL**. 
+The first one used for the syntax highlighting, and the second to integrate the installed WSL command-line within VS Code. The sceenshot below gives an overview of the IDE configuration.
 
 ![vscode screenshot](screen-shot.jpg)
+
+A third popular extension called **Metal** exist, used the most often with Scala. But, concidring my personal experience, it is not fully compatible with Chisel. I prefer waiting for its future updates.
+
+## Project file structure
+
+Scala programs have a partucular file/directory structure. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
