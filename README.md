@@ -143,10 +143,10 @@ Scala programs have a particular files/directory structure. An emphasis is made 
 
 The Megatron-Chisel project is composed of the following files :
 
-### build.sbt
+### Build.sbt
 This file is the project configuration file, and should always been located in the project directory root. The root is also the location where **sbt** should be executed.
 
-### source code
+### Source code
 
 Megatron-Chisel source code files are as follows (located in **/src/main/scala**) :
 
@@ -160,7 +160,7 @@ Megatron-Chisel source code files are as follows (located in **/src/main/scala**
 8. RAM.scala : The file that contains the definition of Megatron RAM.
 9. ROM.scala : The file that contains the definition of Megatron ROM.
 
-### test code
+### Test code
 
 Megatron-Chisel test code files are as follows (located in **/src/test/scala**) :
 
@@ -171,7 +171,7 @@ Megatron-Chisel test code files are as follows (located in **/src/test/scala**) 
 
 Even though Megatron passed an important number of tests, but in my opinion, a more sophisticated test process needs to be implemented to go through all test possibilities.
 
-### resources
+### Resources
 
 The resources of a Scala program are most often stored in the directory **/src/main/ressource**. 
 Megatron-Chisel resources files are as follows :
@@ -181,7 +181,7 @@ Megatron-Chisel resources files are as follows :
 3. ROM.hex :  A ROM memory image with some values used by test code. The image is loaded in ROM at start-up of the machine.
 4. RAM.hex :  A RAM memory image with some values used by test code. The image is loaded in RAM at start-up of the machine.
 
-### waveforms
+### Waveforms
 
 Waveforms are stored in files with the extension **.vcd**. They are stored in the directory **/test_run_dir** which is ignored by git. Then, they are only generated in local-host.
 
