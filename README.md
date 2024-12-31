@@ -171,7 +171,7 @@ Megatron-Chisel test code files are as follows (located in **/src/test/scala**) 
 
 Even though Megatron passed an important number of tests, but in my opinion, a more sophisticated test process needs to be implemented to go through all test possibilities.
 
-### test code
+### resources
 
 The resources of a Scala program are most often stored in the directory **/src/main/ressource**. 
 Megatron-Chisel resources files are as follows :
@@ -187,6 +187,6 @@ Waveforms are stored in files with the extension **.vcd**. They are stored in th
 
 Waveform file (vcd) needs the annotation **.withAnnotations(Seq(WriteVcdAnnotation))** added to the test object inside the test file, to be generated.
 
-## Wabsite
+## Website
 
-the project website for more information : [el-kalam.com](https://www.el-kalam.com/)
+The project website for more information : [el-kalam.com](https://www.el-kalam.com/)
