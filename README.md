@@ -1,5 +1,5 @@
 # Megatron-Chisel Project
-================================
+
 
 The project Megatron-chisel is an implementation of [Megatron project](https://www.el-kalam.com/projets/projet-megatron/) 
  of the hardware description language [Chisel](https://www.chisel-lang.org/). 
@@ -39,7 +39,7 @@ wsl --install
 - At a certain point it is required to create a Linux user account and its corresponding password. Mandatory later to use Linux commands.
 - It is also possible to get help following this [WSL installation tutorial](https://learn.microsoft.com/en-us/windows/wsl/install).
 
-### 2. Installing Scala and Chisel tools and dependencies
+### 2. Installing Scala/Chisel tools and dependencies
 
 Chisel is based on [Scala](https://www.scala-lang.org/) as a [domain-specific language](https://en.wikipedia.org/wiki/Domain-specific_language) (DSL). 
 It means that Chisel is a language created upon Scala language and inherit its properties and principles. 
@@ -140,7 +140,40 @@ A third popular extension called **Metal** exist, used the most often with Scala
 
 ## Project file structure
 
-Scala programs have a partucular file/directory structure. 
+Scala programs have a partecular files/directories structure. An amphasis is made by Scala langage to separate the code from the test. Then in any Scala program, the source code should be located in the directory **/src/main/scala**, and the test code in the directory **/src/test/scala**.
+
+The Megatron-Chisel project is composed of the following files :
+
+### build.sbt
+This file is the project configuration file, and should allyaws been located in the project directories root. The root is also the location where **sbt** should be executed.
+
+### source code
+
+Megatron-Chisel source code files are as follows (located in **/src/main/scala**) :
+
+1. Megatron.scala : The main file that contains the whole project.
+2. components.scala : This file contains the hardware definition of the basic components of Megatron, like the registers, counters, and shifters.
+3. ALU.scala : The file that contains the hardware definition of the Arithmetic and Logic Unit.
+4. DataPath.scala : The file that contains the definition of the datapath.
+5. CU.scala : The file that contains the definition of the Control Unit.
+6. MAU.scala : The file that contains the definition of the Memory Addressing Unit.
+7. IOU.scala : The file that contains the definition of the Input/Output Unit.
+8. RAM.scala : The file that contains the definition of Megatron RAM.
+9. ROM.scala : The file that contains the definition of Megatron ROM.
+
+### test code
+
+Megatron-Chisel test code files are as follows (located in **/src/test/scala**) :
+
+1. test_megatron.scala : This file tests the Fibonacci and Factorial programs on Megatron.
+2. test_component.scala : This file contains a set of test units for the different components of Megatron.
+3. test_CU.scala : The file contains an exostive set of test units for the different intruction opcodes of Megatron.
+4. test_CU.scala : many test units are executed to check the datapath.
+
+Eventhough Megatron passed an important number of tests, but in my opinion, a more sophisticated test process needs to be implemented to go through all test possibilities.
+
+
+
 
 
 
